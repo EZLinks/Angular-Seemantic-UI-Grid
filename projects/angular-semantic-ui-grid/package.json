@@ -1,0 +1,10 @@
+{
+  "name": "angular-semantic-ui-grid",
+  "version": "0.0.4",
+  "description": "A grid using angular and semantic-ui.",
+  "author": "EZLinks",
+  "peerDependencies": {
+    "@angular/common": "^7.0.0",
+    "@angular/core": "^7.0.0"
+  }
+}

@@ -1,0 +1,16 @@
+<angular-semantic-ui-grid 
+    [data]="data" 
+    [settings]="settings"
+    [selectedItem]="selectedItem"
+    (searchMethod)="searchMethod($event)"
+    (itemSelected)="onItemSelected($event)"
+    (doubleClick)="onItemDoubleClick()">
+
+    <ng-template asugBody let-header="header" let-datum="datum">
+        {{getContent(header, datum)}}    
+    </ng-template>
+
+    <ng-template asugFooter>
+        <button class="ui left floated primary button">Submit</button>
+    </ng-template>
+</angular-semantic-ui-grid>

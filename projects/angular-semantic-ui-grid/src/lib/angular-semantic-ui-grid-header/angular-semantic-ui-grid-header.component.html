@@ -1,0 +1,23 @@
+<div>
+  {{header.label}}
+  <i [ngClass]="getSortDirection(header)"></i>
+  <div [ngSwitch]="header.type">
+    <div *ngSwitchCase="headerType.Text" class="ui fluid input">
+      <input type="text" placeholder="{{header.placeholder}}"
+      (keyup)="onSearchInput(header, $event.target.value)"
+      (click)="$event.stopPropagation()">
+    </div>
+    <sui-select *ngSwitchCase="headerType.Select"
+      class="fluid selection"
+      [options]="header.options"
+      [labelField]="header.optionLabel"
+      (selectedOptionChange)="onSearchInput(header, $event[header.optionId])"
+      placeholder="{{header.placeholder}}"
+      (click)="$event.stopPropagation()"
+      #select>
+      <sui-select-option *ngFor="let option of select.filteredOptions"
+        [value]="option">
+      </sui-select-option>
+    </sui-select>
+  </div>
+</div>
