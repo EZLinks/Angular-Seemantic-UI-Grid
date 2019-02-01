@@ -23,6 +23,9 @@ export class AngularSemanticUiGridComponent implements OnInit {
   @Input()
   selectedItem: any;
 
+  @Input()
+  requestRunning: boolean;
+
   @Output()
   searchMethod: EventEmitter<Array<Filter>> = new EventEmitter<Array<Filter>>();
 

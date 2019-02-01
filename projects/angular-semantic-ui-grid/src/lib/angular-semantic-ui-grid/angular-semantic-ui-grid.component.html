@@ -1,33 +1,39 @@
-<table *ngIf="settings" [ngClass]="{'ui basic fixed celled table':true,'selectable': settings.isSelectable, 'sortable': settings.isSortable}">
-    <thead>
-        <tr>
-            <th *ngFor="let header of settings.headers" (click)="sortRequest(header)">
-                <angular-semantic-ui-grid-header [header]="header" (onSearchChange)="onSearchChange($event)"></angular-semantic-ui-grid-header>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let datum of data" (click)="select(datum)" (dblclick)="itemDoubleClicked()" [ngClass]="{'active': settings.isSelectable && selectedItem === datum}">
-            <td *ngFor="let header of settings.headers">
-                <ng-container *ngTemplateOutlet="bodyTemplate; context: { header: this.header, datum: this.datum }"></ng-container>
-            </td>
-        </tr>
-    </tbody>
-    <tfoot class="full-width">
-        <tr>
-            <th [attr.colspan]="settings.headers.length">
-                <!-- <ng-content select="[footer]"></ng-content> -->
-                <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
-                <sui-pagination 
-                    class="right floated"
-                    [collectionSize]="settings.maxCollectionSize"
-                    [pageSize]="settings.pageSize"
-                    [maxSize]="2"
-                    [hasEllipses]="true"
-                    [(page)]="settings.page"
-                    (pageChange)="pageChange($event)">
-                </sui-pagination>
-            </th>
-        </tr>
-    </tfoot>
-</table>
+<div class="dimmable">
+    <div class="ui active inverted dimmer" *ngIf="requestRunning">
+        <div class="ui loader"></div>
+    </div>
+
+    <table *ngIf="settings" [ngClass]="{'ui basic fixed celled table':true,'selectable': settings.isSelectable, 'sortable': settings.isSortable}">
+        <thead>
+            <tr>
+                <th *ngFor="let header of settings.headers" (click)="sortRequest(header)">
+                    <angular-semantic-ui-grid-header [header]="header" (onSearchChange)="onSearchChange($event)"></angular-semantic-ui-grid-header>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let datum of data" (click)="select(datum)" (dblclick)="itemDoubleClicked()" [ngClass]="{'active': settings.isSelectable && selectedItem === datum}">
+                <td *ngFor="let header of settings.headers">
+                    <ng-container *ngTemplateOutlet="bodyTemplate; context: { header: this.header, datum: this.datum }"></ng-container>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot class="full-width">
+            <tr>
+                <th [attr.colspan]="settings.headers.length">
+                    <!-- <ng-content select="[footer]"></ng-content> -->
+                    <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+                    <sui-pagination 
+                        class="right floated"
+                        [collectionSize]="settings.maxCollectionSize"
+                        [pageSize]="settings.pageSize"
+                        [maxSize]="2"
+                        [hasEllipses]="true"
+                        [(page)]="settings.page"
+                        (pageChange)="pageChange($event)">
+                    </sui-pagination>
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</div>

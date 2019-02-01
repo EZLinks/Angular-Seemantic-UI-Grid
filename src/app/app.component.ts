@@ -10,6 +10,8 @@ import { orderBy, slice } from 'lodash';
 export class AppComponent {
   title = 'library-workspace';
 
+  requestRunning: boolean;
+
   originalData = new Array<any>(
     {
       text: 'Tony Stark',
@@ -77,50 +79,55 @@ export class AppComponent {
   } as Settings;
 
   searchMethod = ($event: Array<Filter>) => {
-    let data = this.originalData;
+    this.requestRunning = true;
+    setTimeout(() => {
+      let data = this.originalData;
 
-    let sorts = [];
-    let orders = [];
+      let sorts = [];
+      let orders = [];
 
-    this.settings.headers.forEach((header: Header) => {
-      let value = $event.find(e => e.header.field == header.field);
+      this.settings.headers.forEach((header: Header) => {
+        let value = $event.find(e => e.header.field == header.field);
 
-      if (value) {
-        if (value.value) {
-          switch (header.type) {
-            case HeaderType.Text:
-              data = data.filter(d => d[header.field].startsWith(value.value));
+        if (value) {
+          if (value.value) {
+            switch (header.type) {
+              case HeaderType.Text:
+                data = data.filter(d => d[header.field].startsWith(value.value));
+                break;
+              case HeaderType.Select:
+                data = data.filter(d => d[(header as SelectHeader).optionId] === value.value);
+                break;
+            }
+          }
+
+          switch (value.direction) {
+            case SortDirection.Ascending:
+              sorts.push(header.field);
+              orders.push('asc');
               break;
-            case HeaderType.Select:
-              data = data.filter(d => d[(header as SelectHeader).optionId] === value.value);
+            case SortDirection.Descending:
+              sorts.push(header.field);
+              orders.push('desc');
               break;
           }
         }
+      });
 
-        switch (value.direction) {
-          case SortDirection.Ascending:
-            sorts.push(header.field);
-            orders.push('asc');
-            break;
-          case SortDirection.Descending:
-            sorts.push(header.field);
-            orders.push('desc');
-            break;
-        }
+      $event.forEach((filter: Filter) => {
+        this.settings.headers.find((header: Header) => header === filter.header).sortDirection = filter.direction;
+      });
+
+      data = orderBy(data, sorts, orders);
+      this.data = slice(data, (this.settings.page - 1) * this.settings.pageSize, (this.settings.page - 1) * this.settings.pageSize + this.settings.pageSize);
+
+      if (data.length != this.settings.maxCollectionSize) {
+        this.settings.page = 1;
+        this.settings.maxCollectionSize = data.length;
       }
-    });
 
-    $event.forEach((filter: Filter) => {
-      this.settings.headers.find((header: Header) => header === filter.header).sortDirection = filter.direction;
-    });
-
-    data = orderBy(data, sorts, orders);
-    this.data = slice(data, (this.settings.page - 1) * this.settings.pageSize, (this.settings.page - 1) * this.settings.pageSize + this.settings.pageSize);
-
-    if (data.length != this.settings.maxCollectionSize) {
-      this.settings.page = 1;
-      this.settings.maxCollectionSize = data.length;
-    }
+      this.requestRunning = false;
+    }, 1000);
   }
 
   onItemSelected = (row: any) => {
